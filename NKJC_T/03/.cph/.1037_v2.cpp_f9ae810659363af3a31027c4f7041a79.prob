@@ -1,0 +1,1 @@
+{"name":"Local: 1037_v2","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\03\\1037_v2.cpp","tests":[{"id":1758681190958,"input":"50 10\n1 6\n0 15\n0 19\n1 20\n0 22\n0 25\n1 36\n0 39\n1 40\n1 42","output":"44"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\03\\1037_v2.cpp","group":"local","local":true}

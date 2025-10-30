@@ -1,0 +1,1 @@
+{"name":"Local: 1024","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\04\\1024.cpp","tests":[{"id":1760093327508,"input":"3\naaa\nbbb\nccc","output":"cba\ncba\ncba"},{"id":1760093482047,"input":"3\nabc\ndef\n123","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\04\\1024.cpp","group":"local","local":true}

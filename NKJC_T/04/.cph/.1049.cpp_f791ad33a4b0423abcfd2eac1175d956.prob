@@ -1,0 +1,1 @@
+{"name":"Local: 1049","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\04\\1049.cpp","tests":[{"id":1760443568247,"input":"3\n13579\nAADD\n0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ","output":"13\n7ADG\n0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\04\\1049.cpp","group":"local","local":true}

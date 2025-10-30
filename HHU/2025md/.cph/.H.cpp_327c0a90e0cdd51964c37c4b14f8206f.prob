@@ -1,0 +1,1 @@
+{"name":"Local: H","url":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\2025md\\H.cpp","tests":[{"id":1761401261559,"input":"3\n4 5\n1 4 3 2\n6 13\n1 1 4 5 1 4\n6 13\n5 4 2 8 9 7\n","output":"3\n0\n1\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\2025md\\H.cpp","group":"local","local":true}

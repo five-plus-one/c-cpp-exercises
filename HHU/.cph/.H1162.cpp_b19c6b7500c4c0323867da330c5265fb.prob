@@ -1,0 +1,1 @@
+{"name":"Local: H1162","url":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\H1162.cpp","tests":[{"id":1757723114276,"input":"7\n1\n3\n7\n9\n12\n14\n18\n","output":"1\n1\n4\n4\n5\n5\n2\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\H1162.cpp","group":"local","local":true}
