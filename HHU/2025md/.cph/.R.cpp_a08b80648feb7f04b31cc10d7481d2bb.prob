@@ -1,0 +1,1 @@
+{"name":"Local: R","url":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\2025md\\R.cpp","tests":[{"id":1762257938481,"input":"2\n10 5\n0011111000\n10 6\n0011111000\n","output":"N0\nYE5\n6 3 4 5 8 9 10\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\HHU\\2025md\\R.cpp","group":"local","local":true}
