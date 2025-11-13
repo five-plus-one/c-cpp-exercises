@@ -1,7 +1,7 @@
 #include<iostream>
 #include<algorithm>
 using namespace std;
-const int N = 1e3;
+const int N = 1e5+10;
 int l,n,cnt;
 struct lr{
     int x,y;
