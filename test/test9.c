@@ -8,3 +8,6 @@ int main(){
     goto a;
     }
 }
+
+
+
