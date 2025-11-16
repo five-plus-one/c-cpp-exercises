@@ -14,10 +14,13 @@ int main(){
             scanf("%1d",&c);
             n=n*2+c;
         }
-        map[i] = n;
+        map2[i] = n;
     }
     int cnt = 0;
     for(int op = 0; op<16;op++){ // 针对第一行的操作
+        for(int i=1;i<=4;i++){
+            map[i] = map2[i];
+        }
         map[1] = operate1( map[1],op);
         map[2] = operate2( map[2],op);
         for(int i=2;i<=4;i++){ //从第二行开始，操控使前一行灭掉
