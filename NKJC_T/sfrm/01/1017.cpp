@@ -8,7 +8,8 @@ int test(int a){
         a = map[i] - map2[i] - map2[i-1];
         if(i < n && (a<0||a>1)) return 0;
     }
-    return 1;
+    if(map[n]==map2[n-1]+map2[n]) return 1;
+    else return 0;
 }
 int main(){
     scanf("%d",&n);
