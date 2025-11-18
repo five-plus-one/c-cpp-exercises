@@ -6,7 +6,7 @@ int main(){
     int n;
     cin>>n;
     cout<<"1 ";
-    for(int i=3;i<=n;i+=2){
+    for(int i=3;i<=n;i+=2){ 
         cout<<i<<" "<<i-1<<" ";
     }
     if(n%2==0){
