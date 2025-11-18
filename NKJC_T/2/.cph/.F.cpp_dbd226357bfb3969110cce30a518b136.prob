@@ -1,0 +1,1 @@
+{"name":"Local: F","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\2\\F.cpp","tests":[{"id":1763478799054,"input":"4\n2\nLR\n4\nUUUD\n4\nURDL\n8\nUUDDRRLL","output":"2\n4\n4\n8"},{"id":1763478954288,"input":"1\n5\nLRUUD","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\2\\F.cpp","group":"local","local":true}
