@@ -33,6 +33,6 @@ int main(){
             ans+=(map[i]*map[i+k-1]);
         }
     }
-    printf("%lld",ans);
+    printf("%lld",ans); 
     return 0;
 }

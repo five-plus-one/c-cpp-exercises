@@ -35,7 +35,7 @@ int main(){
     else if(U==0&&D==0){
         ans = max(L,R)+1;
     }
-    else if(U==D&&R==L){
+    else if(U==D&&R==L){ 
         ans = 2*(U+R);
     }else{
         ans = U + D + R + L + 1;
