@@ -33,7 +33,7 @@ int main(){
         int pos = 0;
         bool flag = false;
         for(int i=0;i<m;i++){
-            pos = nextc[pos][t[i]-'a'];
+            pos = nextc[t[i]-'a'][pos];
             // cout<<pos<<endl;
             if(pos == -1 && i<m){flag = true; break;}
         }
