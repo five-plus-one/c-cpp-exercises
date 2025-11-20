@@ -13,12 +13,12 @@ int main(){
     cin>>s;
     n = s.length();
     for(int i=n-1;i>=0;i--){
+        lastc[s[i]-'a'] = i;
         for(int j=0;j<26;j++){
             nextc[j][i] = lastc[j];
             // cout<<lastc[j]<<" ";
         }
         // cout<<endl;
-        lastc[s[i]-'a'] = i;
         // cout<<s[i]-'a'<<" "<<i<<endl;
     }
     // for(int i=0;i<26;i++){
@@ -35,7 +35,9 @@ int main(){
         for(int i=0;i<m;i++){
             pos = nextc[t[i]-'a'][pos];
             // cout<<pos<<endl;
-            if(pos == -1 && i<m){flag = true; break;}
+            if((pos == -1 || pos>=n) ){flag = true; break;}
+            pos++;
+            if((pos>=n && i<m-1) ){flag = true; break;}
         }
         if(flag){
             cout<<"NO\n";
