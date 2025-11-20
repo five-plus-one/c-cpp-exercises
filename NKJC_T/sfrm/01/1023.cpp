@@ -15,12 +15,15 @@ int main(){
     for(int i=n-1;i>=0;i--){
         for(int j=0;j<26;j++){
             nextc[j][i] = lastc[j];
+            // cout<<lastc[j]<<" ";
         }
+        // cout<<endl;
         lastc[s[i]-'a'] = i;
+        // cout<<s[i]-'a'<<" "<<i<<endl;
     }
-    for(int i=0;i<26;i++){
-        cout<<lastc[i]<<endl;
-    }
+    // for(int i=0;i<26;i++){
+    //     cout<<lastc[i]<<endl;
+    // }
 
 
     cin>>q;
@@ -28,12 +31,13 @@ int main(){
         cin>>t;
         m = t.length();
         int pos = 0;
+        bool flag = false;
         for(int i=0;i<m;i++){
-            pos = nextc[pos][t[i]];
-            cout<<pos<<endl;
-            if(pos == -1) break;
+            pos = nextc[pos][t[i]-'a'];
+            // cout<<pos<<endl;
+            if(pos == -1 && i<m){flag = true; break;}
         }
-        if(pos == -1){
+        if(flag){
             cout<<"NO\n";
         }else{
             cout<<"YES\n";
