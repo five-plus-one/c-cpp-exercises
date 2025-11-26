@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
 int T,m,s,x,y;
-void printn(int n,int num){
+void printn(int n,int num){ 
     for(int i=1;i<=n;i++){
         cout<<num;
     }
