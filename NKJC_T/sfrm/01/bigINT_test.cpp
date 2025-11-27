@@ -89,3 +89,11 @@ struct BigInt {
     }
 };
 // --- 高精度模板结束 ---
+int main(){
+    int a = 114514;
+    BigInt ans(1);
+    for(int i=1;i<=1145;i++){
+        ans = ans*a;
+    }
+    cout<<ans;
+}
