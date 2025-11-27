@@ -6,4 +6,5 @@ int main(){
     printf("%llu\n",sizeof("abc"));
     printf("%llu\n",sizeof("abc\0\0"));
     printf("%s %llu\n",a,sizeof(a));
+    printf("%d\n",sizeof("a"));
 }
