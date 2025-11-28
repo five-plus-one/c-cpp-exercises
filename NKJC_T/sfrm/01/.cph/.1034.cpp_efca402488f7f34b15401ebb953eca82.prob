@@ -1,0 +1,1 @@
+{"name":"Local: 1034","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\sfrm\\01\\1034.cpp","tests":[{"id":1764322774769,"input":"3 1\nAND 2\nOR 4\nXOR 8","output":"12"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\sfrm\\01\\1034.cpp","group":"local","local":true}
