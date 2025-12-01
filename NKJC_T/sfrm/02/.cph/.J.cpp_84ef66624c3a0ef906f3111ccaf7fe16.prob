@@ -1,0 +1,1 @@
+{"name":"Local: J","url":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\sfrm\\02\\J.cpp","tests":[{"id":1764576486849,"input":"2\n5 2\n1 4 2 3 4\n3 3\n3 2 1","output":"2\n3"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\NKJC_T\\sfrm\\02\\J.cpp","group":"local","local":true}
