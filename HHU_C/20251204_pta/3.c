@@ -10,13 +10,5 @@ int main(void){
         printf("Data Error");
     }
     return 0;
-    switch (expression)
-    {
-    case constant expression:
-        /* code */
-        break;
-    
-    default:
-        break;
-    }
+
 }
