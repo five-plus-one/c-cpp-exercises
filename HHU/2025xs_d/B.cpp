@@ -1,8 +1,8 @@
 #include<iostream>
 #include<algorithm>
 using namespace std;
-int n,ljs = 0,maxljs = 0;
-double zqf=0;
+long long n,ljs = 0,maxljs = 0;
+long long zqf=0;
 string getpj(int n){
     if(n == 100000) return "Phi";
     else if(n >=96000) return "V";
@@ -15,11 +15,11 @@ string getpj(int n){
 void solve(int casenum){
     if(casenum == 1){
         ljs++;
-        zqf+=1;
+        zqf+=100;
         maxljs = max(maxljs,ljs);
     }else if(casenum ==2){
         ljs++;
-        zqf+=0.65;
+        zqf+=65;
         maxljs = max(maxljs,ljs);
     }else{
         ljs = 0;
@@ -54,7 +54,7 @@ int main(){
             else solve(3);
         }
     }
-    int ans =  (zqf * 90000+ maxljs*1.0* 10000 ) / n ;
+    long long ans =  (zqf * 900+ maxljs* 10000 ) / n ;
 //    cout<<zqf<<" "<<maxljs<<endl; 
     cout<<ans<<" "<<getpj(ans);
 }
