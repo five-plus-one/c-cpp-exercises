@@ -16,9 +16,9 @@ long long solve(int n,int x,int y,int z){
 	return ans;
 }
 int main(){
-    scanf("%d",&T);
+    scanf("%lld",&T);
     while(T--){
-    	scanf("%d %d %d %d",&n,&x,&y,&z);
+    	scanf("%lld %lld %lld %lld",&n,&x,&y,&z);
     	long long ans = solve(n,x,y,z);
     	printf("%lld\n",ans);
 	}
