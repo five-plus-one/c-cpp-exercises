@@ -1,0 +1,1 @@
+{"name":"Local: A","url":"e:\\5plus1\\ACM\\202509_nkjc\\CF\\2173\\A.cpp","tests":[{"id":1764945803305,"input":"4\n4 1\n1001\n3 3\n000\n3 1\n001\n8 2\n01000101\n","output":"1\n3\n2\n2\n"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\CF\\2173\\A.cpp","group":"local","local":true}
