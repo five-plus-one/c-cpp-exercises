@@ -106,7 +106,8 @@ int inputinfo(char type,void *p,int maxinput,int (*func)(void *data,struct info 
         break;
     case 's':
         if((*func)(res.in.str,sysinfo)){
-            p = res.in.str;
+            // 使用 strcpy 复制字符串到目标位置
+            strcpy((char*)p, res.in.str);
             return 0;
         }else return -3;
         break;
@@ -117,7 +118,7 @@ int inputinfowithguide(char type,void *p,int maxinput,int (*func)(void *data,str
     printf("请输入%s:",guide);
     int res = -100;
     while(res!=0){
-        int res = inputinfo(type,p,maxinput,(func),sysinfo);
+        res = inputinfo(type,p,maxinput,(func),sysinfo);
         if(res == 0 ) return 0;
         printf("输入不合法，请重新输入%s(错误代码：%d):",guide,res);
     }
@@ -213,7 +214,7 @@ int findstudentbyid(char *id,struct info *sysinfo){
     return -1;
 }
 int isvalidstudentid(void *data,struct info *sysinfo){
-    int id = *(int*)data;
+    char *id = (char*)data;
     return (findstudentbyid(id,sysinfo) )== -1;
 }
 int isvalidname(void *data ,struct info *sysinfo){
