@@ -298,17 +298,51 @@ void printsolestudentinfo(struct student* info){
     // );
 
 }
+void inputstudentinfo(int type,struct student *info,struct info *sysinfo){
+    switch (type)
+    {
+    case -3:
+        inputinfowithguide('s',(*info).id,MAX_LEN_ID,isvalidstudentid,"学号",sysinfo);
+        return;
+    case -2:
+        inputinfowithguide('s',(*info).name,MAX_LEN_NAME,always_true,"姓名",sysinfo);
+        return;
+    case -1:
+        inputinfowithguide('c',&(*info).gender,0,isvalidgender,"性别(M/F)",sysinfo);
+        if((*info).gender > 97) (*info).gender -=32;
+        return;
+    case 0:
+        inputinfowithguide('f',&(*info).score[0],0,isvalidscore,"语文成绩",sysinfo);
+        calaveragescore(info);
+        return;
+    case 1:
+        inputinfowithguide('f',&(*info).score[1],0,isvalidscore,"数学成绩",sysinfo);
+        calaveragescore(info);
+        return;
+    case 2:
+        inputinfowithguide('f',&(*info).score[2],0,isvalidscore,"英语成绩",sysinfo);
+        calaveragescore(info);
+        return;
+    case -10:
+        for(int i=-3;i<=SCORE_NUM-1;i++){
+            inputstudentinfo(i,info,sysinfo);
+        }
+        return;
+    }
+    return;
+}
 void addstudentinfo(struct info *sysinfo){
     showmenu(1);
     struct student newstudent;
-    inputinfowithguide('s',newstudent.id,MAX_LEN_ID,isvalidstudentid,"学号",sysinfo);
-    inputinfowithguide('s',newstudent.name,MAX_LEN_NAME,always_true,"姓名",sysinfo);
-    inputinfowithguide('c',&newstudent.gender,0,isvalidgender,"性别(M/F)",sysinfo);
-    if(newstudent.gender > 97) newstudent.gender -=32;
-    inputinfowithguide('f',&newstudent.score[0],0,isvalidscore,"语文成绩",sysinfo);
-    inputinfowithguide('f',&newstudent.score[1],0,isvalidscore,"数学成绩",sysinfo);
-    inputinfowithguide('f',&newstudent.score[2],0,isvalidscore,"英语成绩",sysinfo);
-    calaveragescore(&newstudent);
+    inputstudentinfo(-10,&newstudent,sysinfo);
+    // inputinfowithguide('s',newstudent.id,MAX_LEN_ID,isvalidstudentid,"学号",sysinfo);
+    // inputinfowithguide('s',newstudent.name,MAX_LEN_NAME,always_true,"姓名",sysinfo);
+    // inputinfowithguide('c',&newstudent.gender,0,isvalidgender,"性别(M/F)",sysinfo);
+    // if(newstudent.gender > 97) newstudent.gender -=32;
+    // inputinfowithguide('f',&newstudent.score[0],0,isvalidscore,"语文成绩",sysinfo);
+    // inputinfowithguide('f',&newstudent.score[1],0,isvalidscore,"数学成绩",sysinfo);
+    // inputinfowithguide('f',&newstudent.score[2],0,isvalidscore,"英语成绩",sysinfo);
+    // calaveragescore(&newstudent);
     printline();
     printsolestudentinfo(&newstudent);
     // printline();
@@ -323,15 +357,17 @@ void addstudentinfo(struct info *sysinfo){
     clearinput();
     return;
 }
-void inquerystudentinfo_byid(struct info *sysinfo){
+int inquerystudentinfo_byid(struct info *sysinfo){
     struct student studentinfo;
     inputinfowithguide('s',studentinfo.id,MAX_LEN_ID,always_true,"学号",sysinfo);
     int n = findstudentbyid(studentinfo.id,sysinfo);
     if(n == -1){
         printf("不存在学号为\"%s\"的学生信息\n",studentinfo.id);
+        return -404;
     }else{
         studentinfo = (*sysinfo).students[n];
         printsolestudentinfo(&studentinfo);
+        return n;
     }
     
 }
@@ -360,6 +396,12 @@ void inquerystudentinfo(struct info *sysinfo){
         return;
     }else{
         return;
+    }
+}
+void delsolestudent(int i,struct info *sysinfo){
+    (*sysinfo).studentcount--;
+    for(;i<(*sysinfo).studentcount;i++){
+        (*sysinfo).students[i] = (*sysinfo).students[i+1];
     }
 }
 void init_sysinfo_pagechoices(int pageid,int maxnum,int minnum,struct info *sysinfo){
@@ -398,6 +440,20 @@ void showallstudents(struct info *sysinfo){
     printf("按下回车回到首页\n");
     clearinput();
 }
+void delstudent(struct info *sysinfo){
+    int res = inquerystudentinfo_byid(sysinfo);
+    if(res>=0){
+        if(confirm("删除该学生","取消")){
+            delsolestudent(res,sysinfo);
+            printf("删除成功,剩余%d个学生\n",(*sysinfo).studentcount);
+        }else{
+            printf("已取消\n");
+        }
+    }
+    printline();
+    printf("按下回车回到首页\n");
+    clearinput();
+}
 int main(){
     struct info sysinfo;
     init_sysinfo(&sysinfo);
@@ -420,6 +476,9 @@ int main(){
             break;
         case 5:
             showallstudents(&sysinfo);
+            break;
+        case 4:
+            delstudent(&sysinfo);
             break;
         }
     }
