@@ -1,0 +1,1 @@
+{"name":"Local: 2","url":"e:\\5plus1\\ACM\\202509_nkjc\\HHU_C\\20251225\\2.c","tests":[{"id":1766651049564,"input":"4\n90 70 80 90\n70 88 98 90\n58 70 70 89\n70 80 88 94\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\HHU_C\\20251225\\2.c","group":"local","local":true}
