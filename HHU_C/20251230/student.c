@@ -7,7 +7,7 @@
 #define MAX_LEN_ID 50
 #define MAX_LEN_NAME 50
 #define MAX_LEN_SUBJECT 3
-#define FILE "student.txt"
+#define FILENAME "student.txt"
 #define SCORE_NUM 3
 #define INTERVAL_LINES 100
 #define INTERVAL_LEN 40
@@ -335,17 +335,8 @@ void addstudentinfo(struct info *sysinfo){
     showmenu(1);
     struct student newstudent;
     inputstudentinfo(-10,&newstudent,sysinfo);
-    // inputinfowithguide('s',newstudent.id,MAX_LEN_ID,isvalidstudentid,"学号",sysinfo);
-    // inputinfowithguide('s',newstudent.name,MAX_LEN_NAME,always_true,"姓名",sysinfo);
-    // inputinfowithguide('c',&newstudent.gender,0,isvalidgender,"性别(M/F)",sysinfo);
-    // if(newstudent.gender > 97) newstudent.gender -=32;
-    // inputinfowithguide('f',&newstudent.score[0],0,isvalidscore,"语文成绩",sysinfo);
-    // inputinfowithguide('f',&newstudent.score[1],0,isvalidscore,"数学成绩",sysinfo);
-    // inputinfowithguide('f',&newstudent.score[2],0,isvalidscore,"英语成绩",sysinfo);
-    // calaveragescore(&newstudent);
     printline();
     printsolestudentinfo(&newstudent);
-    // printline();
     if(confirm("保存","取消")){
         int n=++(*sysinfo).studentcount;
         (*sysinfo).students[n-1] = newstudent;
@@ -413,20 +404,10 @@ void init_sysinfo(struct info *sysinfo){
     (*sysinfo).page_id = 0;
     init_sysinfo_pagechoices(0,7,0,sysinfo);
     init_sysinfo_pagechoices(2,2,0,sysinfo);
+    init_sysinfo_pagechoices(3,7,0,sysinfo);
 }
 int homepageinput(struct info * sysinfo){
-    // struct in res;
-    // res.in.d = -2;
     showmenu(0);
-    // printf("请输入你需要使用的功能编号: ");
-    // while(!homepageinputvalid(res.in.d)){
-    //     res =input('d',0);
-    //     if(res.error){
-    //         showmenu(0);
-    //         printf("编号无效，请重新输入：");
-    //     }
-    // }
-    // return res.in.d;
     return querychoice(sysinfo);
 }
 void showallstudents(struct info *sysinfo){
@@ -454,6 +435,60 @@ void delstudent(struct info *sysinfo){
     printf("按下回车回到首页\n");
     clearinput();
 }
+void modify(struct info *sysinfo){
+    int res = inquerystudentinfo_byid(sysinfo);
+    if(res >=0){
+        if(confirm("修改该学生","取消")){
+            struct student currentstudent = (*sysinfo).students[res];
+            while(1){
+                printsolestudentinfo(&currentstudent);
+                printf("1.学号 2.姓名 3.性别 4.语文成绩 5.数学成绩 6.英语成绩 7.全部 0.退出\n");
+                int choice = querychoice(sysinfo);
+                if(choice == 0) break;
+                if(choice == 7) inputstudentinfo(-10,&currentstudent,sysinfo);
+                else inputstudentinfo(choice-4,&currentstudent,sysinfo);
+                printf("修改前\n");
+                printsolestudentinfo(&(*sysinfo).students[res]);
+                printf("修改后\n");
+                printsolestudentinfo(&currentstudent);
+                if(confirm("修改","取消")){
+                    (*sysinfo).students[res] = currentstudent;
+                    printf("修改成功\n");
+                }else{
+                    printf("已取消修改\n");
+                }
+            }
+        }else{
+            printf("已取消\n");
+        }
+    }
+    printline();
+    printf("按下回车回到首页\n");
+    clearinput();
+}
+void savetofile(struct info *sysinfo){
+    FILE *file = fopen(FILENAME,"w");
+    if(file == NULL){
+        printf("错误:无法打开文件,保存失败\n");
+    }else{
+        fprintf(file,"%d\n",(*sysinfo).studentcount);
+        for(int i=0;i<(*sysinfo).studentcount;i++){
+            fprintf(file,"%s,%s,%c,%.2f,%.2f,%.2f,%.2f\n",
+                (*sysinfo).students[i].id,
+                (*sysinfo).students[i].name,
+                (*sysinfo).students[i].gender,
+                (*sysinfo).students[i].score[0],
+                (*sysinfo).students[i].score[1],
+                (*sysinfo).students[i].score[2],
+                (*sysinfo).students[i].averagescore
+            );
+        }
+        fclose(file);
+        printf("数据已成功保存至%s\n",FILENAME);
+    }
+    printf("按下回车以返回\n");
+    clearinput();
+}
 int main(){
     struct info sysinfo;
     init_sysinfo(&sysinfo);
@@ -479,6 +514,12 @@ int main(){
             break;
         case 4:
             delstudent(&sysinfo);
+            break;
+        case 3:
+            modify(&sysinfo);
+            break;
+        case 7:
+            savetofile(&sysinfo);
             break;
         }
     }
