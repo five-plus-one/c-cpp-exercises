@@ -511,7 +511,7 @@ void saveToFile() {
     fprintf(file, "%d\n", studentCount);
     
     for (int i = 0; i < studentCount; i++) {
-        fprintf(file, "%s,%s,%c,%.2f,%.2f,%.2f,%.2f\n",
+        fprintf(file, "%s,%s,%c,%.2f,%.2f,%.2f,%.2f\n", 
                 students[i].id,
                 students[i].name,
                 students[i].gender,

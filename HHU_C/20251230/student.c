@@ -33,6 +33,7 @@ struct info{
         int choices_max[MAX_PAGES];
         int choices_min[MAX_PAGES];
     }pages;
+    int preloadstatus;
 };
 
 struct in{
@@ -190,6 +191,9 @@ void showmenu(int id1){
         break;
     case 7:
         printf("保存文件\n");
+        break;
+    case 11:
+        printf("预加载文件\n");
     }
     printline();
 }
@@ -402,6 +406,7 @@ void init_sysinfo_pagechoices(int pageid,int maxnum,int minnum,struct info *sysi
 void init_sysinfo(struct info *sysinfo){
     (*sysinfo).studentcount = 0;
     (*sysinfo).page_id = 0;
+    (*sysinfo).preloadstatus = 0;
     init_sysinfo_pagechoices(0,7,0,sysinfo);
     init_sysinfo_pagechoices(2,2,0,sysinfo);
     init_sysinfo_pagechoices(3,7,0,sysinfo);
@@ -473,8 +478,11 @@ void savetofile(struct info *sysinfo){
     }else{
         fprintf(file,"%d\n",(*sysinfo).studentcount);
         for(int i=0;i<(*sysinfo).studentcount;i++){
-            fprintf(file,"%s,%s,%c,%.2f,%.2f,%.2f,%.2f\n",
+            fprintf(file,"%d:%s,%d:%s,%c,%.2f,%.2f,%.2f,%.2f\n",//为什么这里要设计存储长度？因为无法保证用户学号或姓名中不存在,本身
+                // 这会导致读取时存在混乱（无法判断这个,是字符串内部的,还是分割的,，所以存储一个长度
+                strlen((*sysinfo).students[i].id),
                 (*sysinfo).students[i].id,
+                strlen((*sysinfo).students[i].name),
                 (*sysinfo).students[i].name,
                 (*sysinfo).students[i].gender,
                 (*sysinfo).students[i].score[0],
@@ -489,10 +497,25 @@ void savetofile(struct info *sysinfo){
     printf("按下回车以返回\n");
     clearinput();
 }
+void loadfromfile(struct info *sysinfo){
+    // FILE *file = fopen(FILENAME,"r");
+    // if(file == NULL) {
+    //     if((*sysinfo).preloadstatus == 0){
+    //         printf("未找到数据文件,将从空白开始\n");
+    //     }else{
+    //         printf("读取文件失败,请检查文件是否存在或先保存文件\n");
+    //     }
+    // }else{
+    //     if(fscanf("%d"))
+    // }
+    // fclose(file);
+    
+}
 int main(){
     struct info sysinfo;
     init_sysinfo(&sysinfo);
-    // 之后添加，预读取
+    showmenu(11);
+    loadfromfile(&sysinfo); //预加载
     while(1){
         sysinfo.page_id = 0;
         sysinfo.page_id = homepageinput(&sysinfo);
@@ -520,6 +543,9 @@ int main(){
             break;
         case 7:
             savetofile(&sysinfo);
+            break;
+        case 6:
+            loadfromfile(&sysinfo);
             break;
         }
     }
