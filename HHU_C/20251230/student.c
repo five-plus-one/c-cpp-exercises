@@ -12,6 +12,7 @@
 #define INTERVAL_LINES 100
 #define INTERVAL_LEN 40
 #define MAX_INPUT 100
+#define MAX_PAGES 30
 
 struct student{
     char id[MAX_LEN_ID];
@@ -23,6 +24,11 @@ struct student{
 struct info{
     int studentcount;
     struct student students[MAX_INPUT];
+    int page_id;
+    struct page{
+        int choices_max[MAX_PAGES];
+        int choices_min[MAX_PAGES];
+    }pages;
 };
 
 struct in{
@@ -163,7 +169,8 @@ void showmenu(int id1){
         printf("查询学生信息\n");
         printline();
         printf("1. 按学号精确查询\n");
-        printf("2. 按姓名精确查询");
+        printf("2. 按姓名精确查询\n");
+        printf("0. 返回首页\n");
         break;
     case 3:
         printf("修改学生信息\n");
@@ -191,20 +198,7 @@ void goodbye(){
 int homepageinputvalid(int input){
     return input>=0 && input<=7;
 }
-int homepageinput(){
-    struct in res;
-    res.in.d = -2;
-    showmenu(0);
-    printf("请输入你需要使用的功能编号: ");
-    while(!homepageinputvalid(res.in.d)){
-        res =input('d',0);
-        if(res.error){
-            showmenu(0);
-            printf("编号无效，请重新输入：");
-        }
-    }
-    return res.in.d;
-}
+
 int findstudentbyid(char *id,struct info *sysinfo){
     for(int i =0;i< (*sysinfo).studentcount;i++){
         if(strcmp(id,(*sysinfo).students[i].id) == 0){
@@ -227,6 +221,18 @@ int isvalidgender(void *data,struct info *sysinfo){
 int isvalidscore(void *data,struct info *sysinfo){
     float score = *(float*)data;
     return score>=0 && score<=100;
+}
+int isvalidquerychoice(void *data,struct info *sysinfo){
+    int choice = (*(int*)data);
+    int pageid = (*sysinfo).page_id;
+    int maxnum = (*sysinfo).pages.choices_max[pageid];
+    int minnum = (*sysinfo).pages.choices_min[pageid];
+    return (choice >=minnum && choice <=maxnum);
+}
+int querychoice(struct info *sysinfo){
+    int res;
+    inputinfowithguide('d',&res,0,isvalidquerychoice,"你需要使用的功能编号",sysinfo);
+    return res;
 }
 int confirm(char *ch1,char *ch2 ){
     printf("确认%s?输入Y/y以确认%s,否则%s:",ch1,ch1,ch2);
@@ -273,23 +279,54 @@ void addstudentinfo(struct info *sysinfo){
     clearinput();
     return;
 }
+void inquerystudentinfo(struct info *sysinfo){
+    int res;
+    
+}
+void init_sysinfo_pagechoices(int pageid,int maxnum,int minnum,struct info *sysinfo){
+    (*sysinfo).pages.choices_max[pageid] = maxnum;
+    (*sysinfo).pages.choices_min[pageid] = minnum;
+}
+void init_sysinfo(struct info *sysinfo){
+    (*sysinfo).studentcount = 0;
+    (*sysinfo).page_id = 0;
+    init_sysinfo_pagechoices(0,7,0,sysinfo);
+    init_sysinfo_pagechoices(1,2,0,sysinfo);
+}
+int homepageinput(struct info * sysinfo){
+    // struct in res;
+    // res.in.d = -2;
+    showmenu(0);
+    // printf("请输入你需要使用的功能编号: ");
+    // while(!homepageinputvalid(res.in.d)){
+    //     res =input('d',0);
+    //     if(res.error){
+    //         showmenu(0);
+    //         printf("编号无效，请重新输入：");
+    //     }
+    // }
+    // return res.in.d;
+    
+    return querychoice(sysinfo);
+}
 int main(){
     struct info sysinfo;
-    sysinfo.studentcount = 0;
-    
+    init_sysinfo(&sysinfo);
     // 之后添加，预读取
     while(1){
-        int op = homepageinput();
-        showmenu(op);
-        if(op == 0){
+        sysinfo.page_id = homepageinput(&sysinfo);
+        showmenu(sysinfo.page_id);
+        if(sysinfo.page_id == 0){
             goodbye();
             break;
         }
-        switch (op)
+        switch (sysinfo.page_id)
         {
         case 1:
             addstudentinfo(&sysinfo);
             break;
+        case 2:
+            inquerystudentinfo(&sysinfo);
         }
     }
     return 0;
