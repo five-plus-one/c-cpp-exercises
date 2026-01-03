@@ -109,6 +109,7 @@ void modify(struct info *sysinfo);
 void savetofile(struct info *sysinfo);
 int parse_student_record(const char *line, struct student *stu);
 void loadfromfile(struct info *sysinfo);
+void autosave(struct info *sysinfo);
 
 /* === 主函数 === */
 int main(){
@@ -120,6 +121,7 @@ int main(){
         sysinfo.page_id = 0;
         sysinfo.page_id = homepageinput(&sysinfo);
         if(gotopage(&sysinfo)==-1) break;
+        autosave(&sysinfo);
     }
     return 0;
 
@@ -280,6 +282,10 @@ void showmenu(int id1){
         break;
     case 11:
         printf("预加载文件\n");
+        break;
+    case 12:
+        printf("自动保存提示\n");
+        break;
     }
     printline();
 }
@@ -374,7 +380,7 @@ void printallstudents(struct info *sysinfo){
 }
 //确认函数
 int confirm(char *ch1,char *ch2 ){
-    printf("是否%s?输入Y/y以%s,输入其他内容则%s:",ch1,ch1,ch2);
+    printf("是否%s?输入Y/y以%s,按下回车以%s:",ch1,ch1,ch2);
     struct in res = input('c',0);
     if(res.error) return 0;
     else return (res.in.c == 'y' || res.in.c == 'Y');
@@ -441,11 +447,14 @@ void addstudentinfo(struct info *sysinfo){
         int n=++(*sysinfo).studentcount;
         (*sysinfo).students[n-1] = newstudent;
         printline();
-        printf("已成功保存,现在共有%d个学生信息。按下回车键返回首页",n);
+        printf("已成功保存,现在共有%d个学生信息。\n",n);
+        (*sysinfo).needtosave = 1;
     }else{
-        printf("已取消，按下回车键以返回首页");
+        printf("已取消。\n");
     }
-    clearinput();
+    if(confirm("继续添加学生信息","退出添加")){
+        addstudentinfo(sysinfo);
+    }
     return;
 }
 //根据id查询学生信息
@@ -509,6 +518,7 @@ void init_sysinfo(struct info *sysinfo){
     (*sysinfo).studentcount = 0;
     (*sysinfo).page_id = 0;
     (*sysinfo).preloadstatus = 0;
+    (*sysinfo).needtosave = 0;
     init_sysinfo_pagechoices(0,7,0,sysinfo);
     init_sysinfo_pagechoices(2,2,0,sysinfo);
     init_sysinfo_pagechoices(3,7,0,sysinfo);
@@ -537,6 +547,7 @@ void delstudent(struct info *sysinfo){
         if(confirm("删除该学生","取消")){
             delsolestudent(res,sysinfo);
             printf("删除成功,剩余%d个学生\n",(*sysinfo).studentcount);
+            (*sysinfo).needtosave = 1;
         }else{
             printf("已取消\n");
         }
@@ -565,6 +576,7 @@ void modify(struct info *sysinfo){
                 if(confirm("修改","取消")){
                     (*sysinfo).students[res] = currentstudent;
                     printf("修改成功\n");
+                    (*sysinfo).needtosave = 1;
                 }else{
                     printf("已取消修改\n");
                 }
@@ -601,6 +613,7 @@ void savetofile(struct info *sysinfo){
         fclose(file);
         printf("数据已成功保存至%s\n",FILENAME);
     }
+    (*sysinfo).needtosave = 0;
     printf("按下回车以返回\n");
     clearinput();
 }
@@ -698,6 +711,12 @@ int parse_student_record(const char *line, struct student *stu){
 }
 //从文件中读取
 void loadfromfile(struct info *sysinfo){
+    if((*sysinfo).studentcount > 0){
+        printf("当前系统中已存在数据,读取会造成数据覆盖，请问是否继续?\n");
+        if(!(confirm("继续读取","取消"))){
+            return;
+        }
+    }
     FILE *file = fopen(FILENAME,"r");
     if(file == NULL) {
         if((*sysinfo).preloadstatus == 0){
@@ -754,7 +773,7 @@ void loadfromfile(struct info *sysinfo){
             printf("读取文件完成，成功加载%d个学生信息\n", success_count);
         }
     }
-    printf("按下回车\n");
+    printf("按下回车以继续\n");
     clearinput();
 }
 
@@ -789,4 +808,16 @@ int gotopage(struct info *sysinfo){
         break;
     }
     return 0;
+}
+//自动保存提醒
+void autosave(struct info *sysinfo){
+    if((*sysinfo).needtosave){
+        showmenu(12);
+        printf("检测到你对数据进行了修改，请问是否需要保存到%s以持久化存储文件?\n",FILENAME);
+        (*sysinfo).needtosave = 0;
+        if(confirm("保存","暂不")){
+            (*sysinfo).page_id  = 7;
+            gotopage(sysinfo);
+        }
+    }   
 }
