@@ -2,50 +2,131 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
+#include<math.h>
 
-#define MAX_STUDENTS  1000
-#define MAX_LEN_ID 50
-#define MAX_LEN_NAME 50
-#define MAX_LEN_SUBJECT 3
-#define FILENAME "student.txt"
-#define SCORE_NUM 3
-#define INTERVAL_LINES 100
-#define INTERVAL_LEN 40
-#define MAX_INPUT 100
-#define MAX_PAGES 30
+/* === 宏定义 === */
+#define MAX_STUDENTS  1000      // 最大学生数量
+#define MAX_LEN_ID 50           // 学号最大长度
+#define MAX_LEN_NAME 50         // 姓名最大长度
+#define MAX_LEN_SUBJECT 3       // 科目数量（语文、数学、英语）
+#define FILENAME "student.txt"  // 数据文件名
+#define SCORE_NUM 3             // 成绩数量
+#define INTERVAL_LINES 100      // 清屏时打印的空行数
+#define INTERVAL_LEN 40         // 分隔线长度
+#define MAX_INPUT 256           // 输入缓冲区大小
+#define MAX_PAGES 30            // 最大页面数
 
-struct student{
-    char id[MAX_LEN_ID];
-    char name[MAX_LEN_NAME];
-    char gender;
-    float score[SCORE_NUM];
-    float averagescore;
-};
-struct info{
-    int studentcount;
-    struct student students[MAX_STUDENTS];
-    int page_id;
-    struct query{
-        int studentcount;
-        int result[MAX_STUDENTS];
-    }queryresult;
-    struct page{
-        int choices_max[MAX_PAGES];
-        int choices_min[MAX_PAGES];
-    }pages;
-    int preloadstatus;
+/* === 结构体定义 === */
+
+// 学生信息结构体
+struct student {
+    char id[MAX_LEN_ID];        // 学号
+    char name[MAX_LEN_NAME];    // 姓名
+    char gender;                // 性别（M/F）
+    float score[SCORE_NUM];     // 成绩数组（语文、数学、英语）
+    float averagescore;         // 平均分
 };
 
-struct in{
-    union{
-        float f;
-        char c;
-        int d;
-        char str[MAX_INPUT];
-    }in;
-    char type;
-    int error;
+// 查询结果结构体
+struct query {
+    int studentcount;           // 查询到的学生数量
+    int result[MAX_STUDENTS];   // 查询结果索引数组
 };
+
+// 页面选择范围结构体
+struct page {
+    int choices_max[MAX_PAGES]; // 各页面最大选择值
+    int choices_min[MAX_PAGES]; // 各页面最小选择值
+};
+
+// 系统信息结构体
+struct info {
+    int studentcount;           // 当前学生总数
+    struct student students[MAX_STUDENTS];  // 学生数组
+    int page_id;                // 当前页面ID
+    struct query queryresult;   // 查询结果
+    struct page pages;          // 页面选择范围
+    int preloadstatus;          // 预加载状态（0:预加载，1:正常加载）
+    int needtosave;             // 是否需要保存到文件（用于自动化提示保存到文件）
+};
+
+// 通用输入结构体（支持多种数据类型）
+struct in {
+    union {
+        float f;                // 浮点数
+        char c;                 // 字符
+        int d;                  // 整数
+        char str[MAX_INPUT];    // 字符串
+    } in;
+    char type;                  // 数据类型标识
+    int error;                  // 错误码
+};
+
+/* === 函数声明 === */
+void clearinput();
+struct in input(char type, int maxinput);
+int inputinfo(char type, void *p, int maxinput, 
+              int (*func)(void *data, struct info *sysinfo), 
+              struct info *sysinfo);
+int inputinfowithguide(char type, void *p, int maxinput, 
+                       int (*func)(void *data, struct info *sysinfo), 
+                       char *guide, struct info *sysinfo);
+void printn(int n, char ch);
+void clearconsole();
+void printline();
+void printtitle();
+void showmenu(int id1);
+void goodbye();
+void printstudentinfo_title();
+void printstudentinfo_solestudent(struct student *info);
+int findstudentbyid(char *id, struct info *sysinfo);
+int isvalidstudentid(void *data, struct info *sysinfo);
+int always_true(void *data, struct info *sysinfo);
+int isvalidgender(void *data, struct info *sysinfo);
+int isvalidscore(void *data, struct info *sysinfo);
+int isvalidquerychoice(void *data, struct info *sysinfo);
+int querychoice(struct info *sysinfo);
+void fuzzyquery(char *keyword, struct info *sysinfo);
+void printqueryresult(struct info *sysinfo);
+void printallstudents(struct info *sysinfo);
+int confirm(char *ch1, char *ch2);
+void calaveragescore(struct student* studentinfo);
+void printsolestudentinfo(struct student* info);
+void inputstudentinfo(int type, struct student *info, struct info *sysinfo);
+void addstudentinfo(struct info *sysinfo);
+int inquerystudentinfo_byid(struct info *sysinfo);
+void inquerystudentinfo_byfuzzy(struct info *sysinfo);
+void inquerystudentinfo(struct info *sysinfo);
+void delsolestudent(int i, struct info *sysinfo);
+void init_sysinfo_pagechoices(int pageid, int maxnum, int minnum, 
+                              struct info *sysinfo);
+void init_sysinfo(struct info *sysinfo);
+int homepageinput(struct info *sysinfo);
+void showallstudents(struct info *sysinfo);
+int gotopage(struct info *sysinfo);
+void delstudent(struct info *sysinfo);
+void modify(struct info *sysinfo);
+void savetofile(struct info *sysinfo);
+int parse_student_record(const char *line, struct student *stu);
+void loadfromfile(struct info *sysinfo);
+
+/* === 主函数 === */
+int main(){
+    struct info sysinfo;
+    init_sysinfo(&sysinfo);
+    showmenu(11);
+    loadfromfile(&sysinfo); //预加载
+    while(1){
+        sysinfo.page_id = 0;
+        sysinfo.page_id = homepageinput(&sysinfo);
+        if(gotopage(&sysinfo)==-1) break;
+    }
+    return 0;
+
+}
+
+/* === 函数实现 === */
+
 
 //清空输入缓冲区
 void clearinput(){
@@ -54,6 +135,7 @@ void clearinput(){
     return ;
 }
 
+//统一输入函数
 struct in input(char type,int maxinput){
     struct in input;
     input.type = type;
@@ -92,6 +174,7 @@ struct in input(char type,int maxinput){
     return input;
 }
 
+//信息输入+校验统一函数
 int inputinfo(char type,void *p,int maxinput,int (*func)(void *data,struct info *sysinfo),struct info *sysinfo){
     struct in res = input(type,maxinput);
     if(res.error) return res.error;
@@ -125,6 +208,7 @@ int inputinfo(char type,void *p,int maxinput,int (*func)(void *data,struct info 
     }
     return -4;    
 }
+//信息输入+指引统一函数
 int inputinfowithguide(char type,void *p,int maxinput,int (*func)(void *data,struct info *sysinfo),char *guide,struct info *sysinfo){
     printf("请输入%s:",guide);
     int res = -100;
@@ -135,7 +219,7 @@ int inputinfowithguide(char type,void *p,int maxinput,int (*func)(void *data,str
     }
     return 0;
 }
-
+//打印n个字符
 void printn(int n,char ch){
     while(n--) printf("%c",ch);
     return;
@@ -145,11 +229,13 @@ void clearconsole(){
    printn(INTERVAL_LINES,'\n');
    return;
 }
+//打印线
 void printline(){
     printn(INTERVAL_LEN,'#');
     printf("\n");
     return;
 }
+//打印标题
 void printtitle(){
     printline();
     printf("  学生信息管理系统 V1.0 by 王煜冉\n");
@@ -197,23 +283,23 @@ void showmenu(int id1){
     }
     printline();
 }
+//打印退出信息
 void goodbye(){
     clearconsole();
     printtitle();
     printf("感谢使用该学生管理系统，再见！\n");
 }
+//打印表头
 void printstudentinfo_title(){
     printf("%-15s %-15s %-12s %-9s %-12s %-12s %-12s\n", 
     "学号", "姓名", "性别", "语文", "数学", "英语", "平均分");
 }
+//打印单个学生信息（一行）
 void printstudentinfo_solestudent(struct student *info){
     printf("%-15s %-15s %-2c %-10.2f %-10.2f %-10.2f %-10.2f\n",
         (*info).id,(*info).name,(*info).gender,(*info).score[0],(*info).score[1],(*info).score[2],(*info).averagescore);
 }
-int homepageinputvalid(int input){
-    return input>=0 && input<=7;
-}
-
+//根据id查找学生序号
 int findstudentbyid(char *id,struct info *sysinfo){
     for(int i =0;i< (*sysinfo).studentcount;i++){
         if(strcmp(id,(*sysinfo).students[i].id) == 0){
@@ -222,21 +308,26 @@ int findstudentbyid(char *id,struct info *sysinfo){
     }
     return -1;
 }
+//检查id合法性
 int isvalidstudentid(void *data,struct info *sysinfo){
     char *id = (char*)data;
     return (findstudentbyid(id,sysinfo) )== -1;
 }
+//一个用于检测统一函数，永远返回真（不做检查）的函数
 int always_true(void *data ,struct info *sysinfo){
     return 1;
 }
+//检查是否是合法性别
 int isvalidgender(void *data,struct info *sysinfo){
     char gender = toupper(*(char*)data);
     return (gender == 'M' || gender == 'F');
 }
+//检查是否是合法分数
 int isvalidscore(void *data,struct info *sysinfo){
     float score = *(float*)data;
     return score>=0 && score<=100;
 }
+//检查是否是合法的选择项
 int isvalidquerychoice(void *data,struct info *sysinfo){
     int choice = (*(int*)data);
     int pageid = (*sysinfo).page_id;
@@ -244,11 +335,13 @@ int isvalidquerychoice(void *data,struct info *sysinfo){
     int minnum = (*sysinfo).pages.choices_min[pageid];
     return (choice >=minnum && choice <=maxnum);
 }
+//选择功能项
 int querychoice(struct info *sysinfo){
     int res;
     inputinfowithguide('d',&res,0,isvalidquerychoice,"你需要使用的功能编号",sysinfo);
     return res;
 }
+//模糊查询功能实现
 void fuzzyquery(char *keyword,struct info *sysinfo){
     (*sysinfo).queryresult.studentcount = 0;
     for(int i=0;i<(*sysinfo).studentcount;i++){
@@ -257,6 +350,7 @@ void fuzzyquery(char *keyword,struct info *sysinfo){
         }
     }
 }
+//打印查询结果信息
 void printqueryresult(struct info *sysinfo){
     printline();
     if((*sysinfo).queryresult.studentcount == 0){
@@ -269,6 +363,7 @@ void printqueryresult(struct info *sysinfo){
     }
     printline();
 }
+//打印所有学生信息
 void printallstudents(struct info *sysinfo){
     printline();
     printstudentinfo_title();
@@ -277,12 +372,14 @@ void printallstudents(struct info *sysinfo){
     }
     printline();
 }
+//确认函数
 int confirm(char *ch1,char *ch2 ){
     printf("是否%s?输入Y/y以%s,输入其他内容则%s:",ch1,ch1,ch2);
     struct in res = input('c',0);
     if(res.error) return 0;
     else return (res.in.c == 'y' || res.in.c == 'Y');
 }
+//计算平均分
 void calaveragescore(struct student* studentinfo){
     float totalscore = 0;
     for(int i = 0;i<SCORE_NUM;i++){
@@ -291,17 +388,15 @@ void calaveragescore(struct student* studentinfo){
     (*studentinfo).averagescore = totalscore / SCORE_NUM;
     return;
 }
+//打印单个学生的信息
 void printsolestudentinfo(struct student* info){
     printf("该生信息如下\n");
     printline();
     printstudentinfo_title();
     printstudentinfo_solestudent(info);
     printline();
-    // printf("该生信息如下\n学号:%s\n姓名:%s\n性别:%c\n语文成绩:%f\n数学成绩:%f\n英语成绩:%f\n平均分:%f\n",
-    // (*info).id,(*info).name,(*info).gender,(*info).score[0],(*info).score[1],(*info).score[2],(*info).averagescore
-    // );
-
 }
+//输入学生信息统一函数
 void inputstudentinfo(int type,struct student *info,struct info *sysinfo){
     switch (type)
     {
@@ -335,6 +430,7 @@ void inputstudentinfo(int type,struct student *info,struct info *sysinfo){
     }
     return;
 }
+//添加学生信息
 void addstudentinfo(struct info *sysinfo){
     showmenu(1);
     struct student newstudent;
@@ -352,6 +448,7 @@ void addstudentinfo(struct info *sysinfo){
     clearinput();
     return;
 }
+//根据id查询学生信息
 int inquerystudentinfo_byid(struct info *sysinfo){
     struct student studentinfo;
     inputinfowithguide('s',studentinfo.id,MAX_LEN_ID,always_true,"学号",sysinfo);
@@ -366,12 +463,14 @@ int inquerystudentinfo_byid(struct info *sysinfo){
     }
     
 }
+//模糊查询学生信息
 void inquerystudentinfo_byfuzzy(struct info *sysinfo){
     char keyword[MAX_INPUT];
     inputinfowithguide('s',keyword,MAX_LEN_NAME,always_true,"姓名关键字",sysinfo);
     fuzzyquery(keyword,sysinfo);
     printqueryresult(sysinfo);
 }
+//查询学生信息
 void inquerystudentinfo(struct info *sysinfo){
     showmenu(2);
     int choice = querychoice(sysinfo);
@@ -393,16 +492,19 @@ void inquerystudentinfo(struct info *sysinfo){
         return;
     }
 }
+//删除单个学生
 void delsolestudent(int i,struct info *sysinfo){
     (*sysinfo).studentcount--;
     for(;i<(*sysinfo).studentcount;i++){
         (*sysinfo).students[i] = (*sysinfo).students[i+1];
     }
 }
+//初始化  页面选择书鲁昂
 void init_sysinfo_pagechoices(int pageid,int maxnum,int minnum,struct info *sysinfo){
     (*sysinfo).pages.choices_max[pageid] = maxnum;
     (*sysinfo).pages.choices_min[pageid] = minnum;
 }
+//初始化
 void init_sysinfo(struct info *sysinfo){
     (*sysinfo).studentcount = 0;
     (*sysinfo).page_id = 0;
@@ -411,10 +513,12 @@ void init_sysinfo(struct info *sysinfo){
     init_sysinfo_pagechoices(2,2,0,sysinfo);
     init_sysinfo_pagechoices(3,7,0,sysinfo);
 }
+//首页输入函数
 int homepageinput(struct info * sysinfo){
     showmenu(0);
     return querychoice(sysinfo);
 }
+//显示所有学生的信息
 void showallstudents(struct info *sysinfo){
     if((*sysinfo).studentcount){
         printf("所有学生信息如下\n");
@@ -426,6 +530,7 @@ void showallstudents(struct info *sysinfo){
     printf("按下回车回到首页\n");
     clearinput();
 }
+//删除学生信息
 void delstudent(struct info *sysinfo){
     int res = inquerystudentinfo_byid(sysinfo);
     if(res>=0){
@@ -440,6 +545,7 @@ void delstudent(struct info *sysinfo){
     printf("按下回车回到首页\n");
     clearinput();
 }
+//修改学生信息
 void modify(struct info *sysinfo){
     int res = inquerystudentinfo_byid(sysinfo);
     if(res >=0){
@@ -471,6 +577,7 @@ void modify(struct info *sysinfo){
     printf("按下回车回到首页\n");
     clearinput();
 }
+//保存到文件
 void savetofile(struct info *sysinfo){
     FILE *file = fopen(FILENAME,"w");
     if(file == NULL){
@@ -478,7 +585,7 @@ void savetofile(struct info *sysinfo){
     }else{
         fprintf(file,"%d\n",(*sysinfo).studentcount);
         for(int i=0;i<(*sysinfo).studentcount;i++){
-            fprintf(file,"%d:%s,%d:%s,%c,%.2f,%.2f,%.2f,%.2f\n",//为什么这里要设计存储长度？因为无法保证用户学号或姓名中不存在,本身
+            fprintf(file,"%lld:%s,%lld:%s,%c,%.2f,%.2f,%.2f,%.2f\n",//为什么这里要设计存储长度？因为无法保证用户学号或姓名中不存在,本身
                 // 这会导致读取时存在混乱（无法判断这个,是字符串内部的,还是分割的,，所以存储一个长度
                 strlen((*sysinfo).students[i].id),
                 (*sysinfo).students[i].id,
@@ -497,58 +604,189 @@ void savetofile(struct info *sysinfo){
     printf("按下回车以返回\n");
     clearinput();
 }
-void loadfromfile(struct info *sysinfo){
-    // FILE *file = fopen(FILENAME,"r");
-    // if(file == NULL) {
-    //     if((*sysinfo).preloadstatus == 0){
-    //         printf("未找到数据文件,将从空白开始\n");
-    //     }else{
-    //         printf("读取文件失败,请检查文件是否存在或先保存文件\n");
-    //     }
-    // }else{
-    //     if(fscanf("%d"))
-    // }
-    // fclose(file);
-    
-}
-int main(){
-    struct info sysinfo;
-    init_sysinfo(&sysinfo);
-    showmenu(11);
-    loadfromfile(&sysinfo); //预加载
-    while(1){
-        sysinfo.page_id = 0;
-        sysinfo.page_id = homepageinput(&sysinfo);
-        showmenu(sysinfo.page_id);
-        if(sysinfo.page_id == 0){
-            goodbye();
-            break;
+// 解析函数
+int parse_student_record(const char *line, struct student *stu){
+    const char *p = line;
+    // 1. 解析学号长度
+    int id_len = 0;
+    while(*p >= '0' && *p <= '9'){
+        id_len = id_len * 10 + (*p - '0');
+        p++;
+    }
+    if(*p != ':' || id_len <= 0 || id_len >= MAX_LEN_ID) return 0;
+    p++;  // 跳过冒号
+    // 2. 复制学号
+    int i;
+    for(i = 0; i < id_len && *p != '\0'; i++, p++){
+        stu->id[i] = *p;
+    }
+    stu->id[i] = '\0';
+    if(i != id_len || *p != ',') return 0;
+    p++;  // 跳过逗号
+    // 3. 解析姓名长度
+    int name_len = 0;
+    while(*p >= '0' && *p <= '9'){
+        name_len = name_len * 10 + (*p - '0');
+        p++;
+    }
+    if(*p != ':' || name_len <= 0 || name_len >= MAX_LEN_NAME) return 0;
+    p++;  // 跳过冒号
+    // 4. 复制姓名
+    for(i = 0; i < name_len && *p != '\0'; i++, p++){
+        stu->name[i] = *p;
+    }
+    stu->name[i] = '\0';
+    if(i != name_len || *p != ',') return 0;
+    p++;  // 跳过逗号
+    // 5. 解析性别
+    if(*p == '\0') return 0;
+    stu->gender = *p;
+    p++;
+    // 验证性别
+    if(stu->gender != 'M' && stu->gender != 'F' && 
+       stu->gender != 'm' && stu->gender != 'f'){
+        return 0;
+    }
+    // 统一转换为大写
+    if(stu->gender >= 'a' && stu->gender <= 'z'){
+        stu->gender -= 32;
+    }
+    if(*p != ',') return 0;
+    p++;  // 跳过逗号
+    // 6. 解析三门成绩
+    for(int j = 0; j < SCORE_NUM; j++){
+        // 跳过可能的空格
+        while(*p == ' ') p++;
+        // 解析浮点数
+        char num_buf[20];
+        int k = 0;
+        // 读取数字和小数点
+        while((*p >= '0' && *p <= '9') || *p == '.' || *p == '-'){
+            if(k < 19) num_buf[k++] = *p;
+            p++;
         }
-        switch (sysinfo.page_id)
-        {
-        case 1:
-            addstudentinfo(&sysinfo);
-            break;
-        case 2:
-            inquerystudentinfo(&sysinfo);
-            break;
-        case 5:
-            showallstudents(&sysinfo);
-            break;
-        case 4:
-            delstudent(&sysinfo);
-            break;
-        case 3:
-            modify(&sysinfo);
-            break;
-        case 7:
-            savetofile(&sysinfo);
-            break;
-        case 6:
-            loadfromfile(&sysinfo);
-            break;
+        num_buf[k] = '\0';
+        stu->score[j] = atof(num_buf);
+        // 验证成绩范围
+        if(stu->score[j] < 0 || stu->score[j] > 100){
+            return 0;
+        }
+        if(j < SCORE_NUM - 1){
+            if(*p != ',') return 0;
+            p++;  // 跳过逗号
         }
     }
-    return 0;
+    if(*p != ',') return 0;
+    p++;  // 跳过逗号
+    // 7. 解析平均分
+    // 跳过可能的空格
+    while(*p == ' ') p++;
+    char avg_buf[20];
+    int k = 0;
+    while((*p >= '0' && *p <= '9') || *p == '.' || *p == '-'){
+        if(k < 19) avg_buf[k++] = *p;
+        p++;
+    }
+    avg_buf[k] = '\0';
+    stu->averagescore = atof(avg_buf);
+    // 验证平均分
+    float calculated_avg = (stu->score[0] + stu->score[1] + stu->score[2]) / SCORE_NUM;
+    if(fabs(stu->averagescore - calculated_avg) > 0.01){
+        stu->averagescore = calculated_avg;
+    }
+    return 1;
+}
+//从文件中读取
+void loadfromfile(struct info *sysinfo){
+    FILE *file = fopen(FILENAME,"r");
+    if(file == NULL) {
+        if((*sysinfo).preloadstatus == 0){
+            printf("未找到数据文件,将从空白开始\n");
+        }else{
+            printf("读取文件失败,请检查文件是否存在或先保存文件\n");
+        }
+        return;
+    }
+    // 读取学生数量
+    if(fscanf(file,"%d\n",&(*sysinfo).studentcount) != 1){
+        (*sysinfo).studentcount = 0;
+        if((*sysinfo).preloadstatus == 0){
+            printf("预读取时发生错误:文件格式错误\n");
+        }else{
+            printf("读取文件时发生错误:文件格式错误\n");
+        }
+        fclose(file);
+    }else{
+        // 确保不超过最大容量
+        if((*sysinfo).studentcount > MAX_STUDENTS){
+            printf("警告:文件中的学生数量(%d)超过系统最大容量(%d)，只读取前%d个\n",
+                (*sysinfo).studentcount, MAX_STUDENTS, MAX_STUDENTS);
+            (*sysinfo).studentcount = MAX_STUDENTS;
+        }
+        
+        char line[MAX_INPUT];
+        int success_count = 0;
+        
+        // 读取每个学生记录
+        for(int i = 0; i < (*sysinfo).studentcount; i++){
+            if(!fgets(line, sizeof(line), file)){
+                printf("警告:文件过早结束，预期%d个学生，实际读取%d个\n",
+                    (*sysinfo).studentcount, success_count);
+                break;
+            }
+            // 移除换行符
+            line[strcspn(line, "\n\r")] = '\0';
+            // 解析学生记录
+            if(parse_student_record(line, &(*sysinfo).students[success_count])){
+                success_count++;
+            }else{
+                printf("警告:第%d行格式错误，跳过该记录\n", i+2);
+            }
+        }
+        // 更新实际读取的学生数量
+        (*sysinfo).studentcount = success_count;
+        
+        fclose(file);
+        
+        if((*sysinfo).preloadstatus == 0){
+            printf("预读取完成，成功加载%d个学生信息\n", success_count);
+        }else{
+            printf("读取文件完成，成功加载%d个学生信息\n", success_count);
+        }
+    }
+    printf("按下回车\n");
+    clearinput();
+}
 
+int gotopage(struct info *sysinfo){
+    showmenu((*sysinfo).page_id);
+    if((*sysinfo).page_id == 0){
+        goodbye();
+        return -1;
+    }
+    switch ((*sysinfo).page_id)
+    {
+    case 1:
+        addstudentinfo(sysinfo);
+        break;
+    case 2:
+        inquerystudentinfo(sysinfo);
+        break;
+    case 5:
+        showallstudents(sysinfo);
+        break;
+    case 4:
+        delstudent(sysinfo);
+        break;
+    case 3:
+        modify(sysinfo);
+        break;
+    case 7:
+        savetofile(sysinfo);
+        break;
+    case 6:
+        loadfromfile(sysinfo);
+        break;
+    }
+    return 0;
 }
