@@ -360,7 +360,7 @@ void fuzzyquery(char *keyword,struct info *sysinfo){
 void printqueryresult(struct info *sysinfo){
     printline();
     if((*sysinfo).queryresult.studentcount == 0){
-        printf("未查询到相关学生信息\n");
+        printf("未查询到相关学生信息");
     }else{
         printstudentinfo_title();
         for(int i=0;i<(*sysinfo).queryresult.studentcount;i++){
@@ -584,7 +584,6 @@ void modify(struct info *sysinfo){
                     (*sysinfo).needtosave = 1;
                 }else{
                     printf("已取消修改\n");
-                    currentstudent = (*sysinfo).students[res];
                 }
             }
         }else{
