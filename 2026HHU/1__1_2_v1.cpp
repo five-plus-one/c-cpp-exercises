@@ -1,4 +1,4 @@
-// 5plus1 2026/1/19 v1
+// 5plus1 2026/1/19 v2
 #include<iostream>
 using namespace std;
 const int N = 210;
@@ -8,7 +8,7 @@ const int result[5][5]={
     {0,-1,1,1,-1},
     {-2,0,-1,1,-1},
     {-2,-2,0,-1,1},
-    {-2,-2,0,-1,1},
+    {-2,-2,-2,0,1},
     {-2,-2,-2,-2,0}
 };
 int getresult(int a,int b){ //a对b
