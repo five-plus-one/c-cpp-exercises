@@ -444,6 +444,12 @@ void inputstudentinfo(int type,struct student *info,struct info *sysinfo){
 //添加学生信息
 void addstudentinfo(struct info *sysinfo){
     showmenu(1);
+     if((*sysinfo).studentcount >= MAX_STUDENTS){
+        printf("错误：学生数量已达到最大容量 %d,无法添加新学生！\n", MAX_STUDENTS);
+        printf("按下回车返回首页\n");
+        clearinput();
+        return;
+    }
     struct student newstudent;
     inputstudentinfo(-10,&newstudent,sysinfo);
     printline();
@@ -616,7 +622,9 @@ void savetofile(struct info *sysinfo){
                 (*sysinfo).students[i].averagescore
             );
         }
-        fclose(file);
+        if(fclose(file)){
+            printf("警告：无法关闭文件\n");
+        }
         printf("数据已成功保存至%s\n",FILENAME);
     }
     (*sysinfo).needtosave = 0;
@@ -740,7 +748,9 @@ void loadfromfile(struct info *sysinfo){
         }else{
             printf("读取文件时发生错误:文件格式错误\n");
         }
-        fclose(file);
+        if(fclose(file)){
+            printf("警告：无法关闭文件\n");
+        }
     }else{
         // 确保不超过最大容量
         if((*sysinfo).studentcount > MAX_STUDENTS){
@@ -771,7 +781,9 @@ void loadfromfile(struct info *sysinfo){
         // 更新实际读取的学生数量
         (*sysinfo).studentcount = success_count;
         
-        fclose(file);
+        if(fclose(file)){
+            printf("警告：无法关闭文件\n");
+        }
         
         if((*sysinfo).preloadstatus == 0){
             printf("预读取完成，成功加载%d个学生信息\n", success_count);
