@@ -1,6 +1,8 @@
 //20260122 @5plus1 v2
+// 哈希表的使用
 #include<iostream>
 #include<algorithm>
+#include<unordered_map>
 using namespace std;
 const int N = 2 * 1e5 + 10;
 struct st{
@@ -11,12 +13,13 @@ struct st{
     int good;
 }film[N];
 int scientist[N],n,m;
-
+unordered_map <int,int> lang_count;
 int main(){
     ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr);
     cin>>n;
     for(int i=1;i<=n;i++){
         cin>>scientist[i];
+        lang_count[scientist[i]]++;
     }
     cin>>m;
     for(int i=1;i<=m;i++){
@@ -30,12 +33,8 @@ int main(){
     maxfilm.perfect = -1;
     maxfilm.good = -1;
     for(int i=1;i<=m;i++){
-        film[i].good = 0;
-        film[i].perfect = 0;
-        for(int j=1;j<=n;j++){
-            if(film[i].audio == scientist[j]) film[i].perfect++;
-            else if(film[i].subtitle == scientist[j]) film[i].good++;
-        }
+        film[i].perfect = lang_count[film[i].audio];
+        film[i].good = lang_count[film[i].subtitle];
         if(film[i].perfect > maxfilm.perfect || (film[i].perfect == maxfilm.perfect && film[i].good > maxfilm.good)){
             maxfilm = film[i];
         }
