@@ -1,4 +1,4 @@
-// 5plus1 20260122 贪心 v1
+// 5plus1 20260122 贪心 v1 WA
 #include<iostream>
 #include<algorithm>
 using namespace std;
@@ -21,7 +21,7 @@ int main(){
     for(int i=0;i<n;i++){
         int flag = 0;
         for(int j=1;j<=num;j++){
-            if(stall[j] < cow[i].a){
+            if(stall[j] <= cow[i].a){
                 stall[j] = cow[i].b;flag = 1;
                 cow[i].id = j;
                 break;
