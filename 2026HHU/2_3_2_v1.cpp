@@ -1,4 +1,4 @@
-// 20260122 5plus1
+// 20260122 5plus1 V2  修复max_value初始化时整数溢出问题
 #include<iostream>
 using namespace std;
 using ll = long long;
@@ -8,7 +8,7 @@ ll qzh[N][N],value,max_value;
 int main(){
     ios::sync_with_stdio(false),cin.tie(nullptr),cout.tie(nullptr);
     cin>>n>>m>>c;
-    max_value = -32767 *n*m -1;
+    max_value = -32767LL *n*m -1;
     for(x = 1;x<=n;x++){
         for(y=1;y<=m;y++){
             cin>>map[x][y];
