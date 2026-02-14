@@ -1,0 +1,1 @@
+{"name":"Local: 2_4_2_v1","url":"e:\\5plus1\\ACM\\202509_nkjc\\2026HHU\\2_4_2_v1.cpp","tests":[{"id":1769673337043,"input":"4 7\n20 15 10 17","output":"15"},{"id":1769673538139,"input":"5 20\n4 42 40 26 46","output":"36"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"e:\\5plus1\\ACM\\202509_nkjc\\2026HHU\\2_4_2_v1.cpp","group":"local","local":true}
