@@ -1,0 +1,1 @@
+{"name":"Local: C","url":"d:\\5plus1\\ACM\\202509_nkjc\\luogu\\jnxtest\\test1\\C.cpp","tests":[{"id":1775391418930,"input":"3\n20\n30\n100","output":"51"},{"id":1775391433218,"input":"2\n0\n0","output":"0"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\5plus1\\ACM\\202509_nkjc\\luogu\\jnxtest\\test1\\C.cpp","group":"local","local":true}

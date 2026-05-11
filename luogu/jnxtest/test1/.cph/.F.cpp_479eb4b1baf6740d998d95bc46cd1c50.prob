@@ -1,0 +1,1 @@
+{"name":"Local: F","url":"d:\\5plus1\\ACM\\202509_nkjc\\luogu\\jnxtest\\test1\\F.cpp","tests":[{"id":1775392401876,"input":"3 2 2\n1 2 3\n4 5 6\n7 8 9","output":"14"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\5plus1\\ACM\\202509_nkjc\\luogu\\jnxtest\\test1\\F.cpp","group":"local","local":true}
